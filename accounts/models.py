@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.db.models import CASCADE
 
-# Create your models here.
+# extended user from base django model
 
 class User(AbstractUser):
   avatar = models.ImageField(upload_to='avatars/', null=True, blank=True)

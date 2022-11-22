@@ -1,7 +1,6 @@
 from django.urls import path, include
 from accounts import views
 
-# from .views import RegisterUserAPIView, UserProfileView, UserProfileEditView
 from .views import StudiosView, StudioView, StudioClassesView, StudiosFilterView, SubscriptionPlansView, SubscriptionPlanView, SubscriptionPlanSubscribeView, StudioClassEnrolView, StudioClassDropView
 
 app_name = 'studios'

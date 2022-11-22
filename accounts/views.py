@@ -11,13 +11,12 @@ from studios.models import Card, Payment, Subscription, ClassBooking
 from .serializers import RegisterSerializer, UserProfileSerializer, UserCardSerializer
 from studios.serializers import PaymentsSerializer, SubscriptionSubscribeSerializer, ClassBookingUserSerializer
 
-# Create your views here.
-
+# register user
 class RegisterUserAPIView(CreateAPIView):
   permission_classes = (AllowAny,)
   serializer_class = RegisterSerializer
 
-
+# view user
 class UserProfileView(RetrieveAPIView):
   serializer_class = UserProfileSerializer
   permission_classes = [IsAuthenticated]
@@ -28,6 +27,7 @@ class UserProfileView(RetrieveAPIView):
     else:
       raise InvalidToken("This action is not authorized for this user.")
 
+# user can edit their profile
 class UserProfileEditView(UpdateAPIView):
   serializer_class = UserProfileSerializer
   permission_classes = [IsAuthenticated]
@@ -38,10 +38,12 @@ class UserProfileEditView(UpdateAPIView):
     else:
       raise InvalidToken("This action is not authorized for this user.")
 
+# user can create a card
 class UserCardCreateView(CreateAPIView):
   serializer_class = UserCardSerializer
   permission_classes = [IsAuthenticated]
 
+# user can update their card info
 class UserCardUpdateView(UpdateAPIView):
   serializer_class = UserCardSerializer
   permission_classes = [IsAuthenticated]
@@ -50,6 +52,7 @@ class UserCardUpdateView(UpdateAPIView):
     current_user = User.objects.filter(id=self.request.user.id)[0]
     return get_object_or_404(Card, user=current_user)
 
+# user can see their payments history
 class UserPaymentHistoryView(ListAPIView):
   serializer_class = PaymentsSerializer
   permission_classes = [IsAuthenticated]
@@ -58,6 +61,7 @@ class UserPaymentHistoryView(ListAPIView):
     current_user = User.objects.filter(id=self.request.user.id)[0]
     return Payment.objects.filter(user=current_user)
 
+# user can see future upcoming payment
 class UserFuturePaymentView(RetrieveAPIView):
   serializer_class = SubscriptionSubscribeSerializer
   permission_classes = [IsAuthenticated]
@@ -66,6 +70,7 @@ class UserFuturePaymentView(RetrieveAPIView):
     current_user = User.objects.filter(id=self.request.user.id)[0]
     return get_object_or_404(Subscription, user=current_user)
 
+# user can update their subscription
 class UserUpdateSubscriptionView(UpdateAPIView):
   serializer_class = SubscriptionSubscribeSerializer
   permission_classes = [IsAuthenticated]
@@ -74,6 +79,7 @@ class UserUpdateSubscriptionView(UpdateAPIView):
     current_user = User.objects.filter(id=self.request.user.id)[0]
     return get_object_or_404(Subscription, user=current_user)
 
+# user can see their class bookings
 class UserClassBookingsView(ListAPIView):
   serializer_class = ClassBookingUserSerializer
   permission_classes = [IsAuthenticated]
