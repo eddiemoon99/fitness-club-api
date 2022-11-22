@@ -4,8 +4,6 @@ This repo contains the source code for a backend API for a fitness club web appl
 
 This application was created using Django, and Django REST Framework.
 
-To see the application description as well as functionalities, see [here](context.md)
-
 ## Development Setup
 
 To run the backend clone the repo and first run:
