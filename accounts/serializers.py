@@ -6,7 +6,6 @@ from rest_framework.exceptions import PermissionDenied
 from accounts.models import User
 from studios.models import Card
 
-# handle user registration
 class RegisterSerializer(serializers.ModelSerializer):
   email = serializers.CharField(
     validators=[UniqueValidator(queryset=User.objects.all())]
@@ -20,19 +19,22 @@ class RegisterSerializer(serializers.ModelSerializer):
       username=validated_data['username'],
       email=validated_data['email'],
       first_name=validated_data['first_name'],
-      last_name=validated_data['last_name']
+      last_name=validated_data['last_name'],
+      phone_number=validated_data['phone_number'],
+      avatar=validated_data['avatar'],
     )
     user.set_password(validated_data['password'])
     user.save()
     return user
 
-# user profile
 class UserProfileSerializer(serializers.ModelSerializer):
+  email = serializers.CharField(
+    validators=[UniqueValidator(queryset=User.objects.all())]
+  )
   class Meta:
     model = User
-    fields = ['id', 'first_name', 'last_name', 'email', 'avatar', 'phone_number']
+    fields = ['id', 'username', 'first_name', 'last_name', 'email', 'avatar', 'phone_number']
 
-# create card for user
 class UserCardSerializer(serializers.ModelSerializer):
   user = serializers.HiddenField(
     default=serializers.CurrentUserDefault()

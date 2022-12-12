@@ -2,6 +2,8 @@ from django.db import models
 from django.contrib.auth import get_user_model
 from django.db.models import CASCADE
 
+# code for distance calc, sqlite doesn't natively support math functions, so add them
+# source: https://stackoverflow.com/questions/19703975/django-sort-by-distance
 import math
 from django.db.backends.signals import connection_created
 from django.dispatch import receiver
@@ -9,7 +11,6 @@ from django.db.models.expressions import RawSQL
 
 from accounts.models import User
 
-# sqlite doesn't natively support math functions, adding them
 @receiver(connection_created)
 def extend_sqlite(connection=None, **kwargs):
     if connection.vendor == "sqlite":
@@ -21,6 +22,7 @@ def extend_sqlite(connection=None, **kwargs):
         cf('least', 2, min)
         cf('greatest', 2, max)
 
+# Create your models here.
 
 class Image(models.Model):
   image = models.ImageField(upload_to='studios/', null=True, blank=True)
@@ -29,6 +31,9 @@ class Image(models.Model):
   def __str__(self):
     return self.image.url
 
+  def absolute_url(self):
+    return f"http://localhost:8000//{self.image.url}"
+
 class Point(models.Model):
   latitude = models.FloatField()
   longitude = models.FloatField()
@@ -36,8 +41,9 @@ class Point(models.Model):
   
   def __str__(self):
     return f"{self.latitude},{self.longitude}"
+    # return self.studio.name
 
-  # sort points by their lat | long, based on closest to argument lat | long
+  #method source: https://stackoverflow.com/questions/19703975/django-sort-by-distance
   def get_points_nearby_coords(latitude, longitude, max_distance=None):
     """
     Return objects sorted by distance to specified coordinates
@@ -68,6 +74,14 @@ class Amenity(models.Model):
   def __str__(self):
     return f"{self.type} / {self.quantity}"
 
+# class Class(models.Model):
+#     name = models.CharField(max_length=200)
+#     transit_num = models.CharField(max_length=200)
+#     address = models.CharField(max_length=200)
+#     email = models.EmailField(default='admin@utoronto.ca', max_length=254)
+#     capacity = models.PositiveIntegerField(blank=True, null=True)
+#     last_modified = models.DateTimeField(auto_now=True)
+
 class Keyword(models.Model):
   keyword = models.CharField(max_length=200)
   studio_class = models.ForeignKey('StudioClass', on_delete=models.DO_NOTHING, related_name='keywords')
@@ -88,7 +102,7 @@ class StudioClass(models.Model):
   status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='active')
 
   def __str__(self):
-    return self.name
+    return f"{self.id} - {self.name} - {self.start_time}"
 
   class Meta:
     ordering = ['start_time']
@@ -97,8 +111,11 @@ class StudioClass(models.Model):
 class Studio(models.Model):
   name = models.CharField(max_length=200)
   address = models.CharField(max_length=200)
+  # geolocation = models.OneToOneField(Point, on_delete=models.CASCADE, related_name='geolocation', default=None, null=True, blank=True)
   postal_code = models.CharField(max_length=200)
   phone_number = models.CharField(max_length=200)
+  # images = models.ManyToManyField(Image, related_name='images', blank=True)
+  # amenities = models.ManyToManyField(Amenity, related_name='amenities', blank=True)
 
   def __str__(self):
     return self.name
@@ -113,13 +130,13 @@ class SubscriptionPlan(models.Model):
 class Subscription(models.Model):
   start_date = models.DateField()
   next_date = models.DateField()
-  user = models.OneToOneField(User, on_delete=models.DO_NOTHING, related_name='subscription')
+  user = models.ForeignKey(User, on_delete=models.DO_NOTHING, related_name='subscription')
   price = models.FloatField()
   duration = models.PositiveIntegerField()
   status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='active')
 
   def __str__(self):
-    return f"{self.user.username} - subscription"
+    return f"{self.user.username} - subscription - {self.id}"
 
 class Card(models.Model):
   user = models.OneToOneField(User, on_delete=models.DO_NOTHING, related_name='card')

@@ -13,8 +13,8 @@ from rest_framework import filters as rest_filters
 from .models import Studio, Point, StudioClass, SubscriptionPlan, ClassBooking
 from .serializers import ClassBookingSerializer, ClassDroppingSerializer, StudiosSerializer, StudioSerializer, StudioClassesSerializer, SubscriptionPlansSerializer, SubscriptionSubscribeSerializer
 
+# Create your views here.
 
-# list view for all studios
 class StudiosView(ListAPIView):
   serializer_class = StudiosSerializer
 
@@ -30,7 +30,6 @@ class StudiosView(ListAPIView):
     studios_in_order = sorted(Studio.objects.all(), key=lambda x: studio_ids.index(x.id))
     return studios_in_order
 
-# filter option for studios
 class StudiosFilterView(ListAPIView):
   serializer_class = StudiosSerializer
   filter_backends = [rest_filters.SearchFilter]
@@ -40,14 +39,12 @@ class StudiosFilterView(ListAPIView):
   def get_queryset(self):
     return Studio.objects.all()
 
-# specific studio
 class StudioView(RetrieveAPIView):
   serializer_class = StudioSerializer
 
   def get_object(self):
     return get_object_or_404(Studio, id=self.kwargs['studio_id'])
 
-# classes of a specific studio
 class StudioClassesView(ListAPIView):
   serializer_class = StudioClassesSerializer
   filter_backends = [rest_filters.SearchFilter, filters.DjangoFilterBackend]
@@ -59,31 +56,26 @@ class StudioClassesView(ListAPIView):
     future_classes = classes.filter(start_time__gte=timezone.now())
     return future_classes
 
-# subscription plans
 class SubscriptionPlansView(ListAPIView):
   serializer_class = SubscriptionPlansSerializer
 
   def get_queryset(self):
     return SubscriptionPlan.objects.all()
 
-# specific subscription plan
 class SubscriptionPlanView(RetrieveAPIView):
   serializer_class = SubscriptionPlansSerializer
 
   def get_object(self):
     return get_object_or_404(SubscriptionPlan, id=self.kwargs['subscription_plan_id'])
 
-# user subscription to a plan
 class SubscriptionPlanSubscribeView(CreateAPIView):
   permission_classes = [IsAuthenticated]
   serializer_class = SubscriptionSubscribeSerializer
 
-# user enrol in a class
 class StudioClassEnrolView(CreateAPIView):
   permission_classes = [IsAuthenticated]
   serializer_class = ClassBookingSerializer
 
-# user drop a class
 class StudioClassDropView(DestroyAPIView):
   permission_classes = [IsAuthenticated]
   serializer_class = ClassDroppingSerializer

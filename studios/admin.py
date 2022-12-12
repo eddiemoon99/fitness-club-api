@@ -2,7 +2,7 @@ from django.contrib import admin
 
 from studios.models import Studio, Point, Image, Amenity, Keyword, StudioClass, SubscriptionPlan, Subscription, Payment, Card, ClassBooking
 
-# inlines for admin panel
+# Register your models here.
 
 class PointInline(admin.TabularInline):
   model = Point
@@ -26,6 +26,7 @@ class KeywordInline(admin.TabularInline):
   extra = 1
 
 class StudioClassAdmin(admin.ModelAdmin):
+  #readonly_fields=('start_time', 'end_time', 'recurrence_end')
   search_fields = ('name',)
   inlines = (KeywordInline,)
 
