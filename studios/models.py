@@ -32,7 +32,7 @@ class Image(models.Model):
     return self.image.url
 
   def absolute_url(self):
-    return f"http://localhost:8000//{self.image.url}"
+    return f"https://moonfitness-api.herokuapp.com/{self.image.url}"
 
 class Point(models.Model):
   latitude = models.FloatField()
