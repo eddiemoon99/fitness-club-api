@@ -19,7 +19,7 @@ from decouple import config
 import os
 
 SECRET_KEY = config('SECRET_KEY')
-
+PASSWORD = config('PASSWORD')
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -90,8 +90,12 @@ WSGI_APPLICATION = 'PB.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'railway',
+        'USER': 'postgres',
+        'PASSWORD': f"{PASSWORD}",
+        'HOST': 'containers-us-west-160.railway.app',
+        'PORT': '6043',
     }
 }
 
@@ -130,7 +134,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
 django_on_heroku.settings(locals())
