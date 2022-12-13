@@ -32,7 +32,9 @@ class Image(models.Model):
     return self.image.url
 
   def absolute_url(self):
-    return f"https://moonfitness-api.herokuapp.com{self.image.url}"
+    # todo: change this to read from s3 bucket properly :D
+    image_url = self.image.url[14:]
+    return f"https://moonfitness-images.s3.us-east-2.amazonaws.com{image_url}"
 
 class Point(models.Model):
   latitude = models.FloatField()
